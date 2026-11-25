@@ -2,11 +2,11 @@
   "seal": {
     "format": "byoai.release/0.1",
     "repo": "byoai-corp/dictionary",
-    "release": "v0.1.0",
-    "issued_at": "2026-11-25T00:18:20Z",
-    "files": 77,
+    "release": "v0.2.0",
+    "issued_at": "2026-11-25T18:00:01Z",
+    "files": 117,
     "manifest": "MANIFEST.sha256",
-    "manifest_sha256": "3fce630db79da5f6d4383b18a0fc6d498ba4efd6b0ba67080d88f2b39a140790",
+    "manifest_sha256": "15568236ca725f6fbce3b18bae9746f979fa3ccef6d1e4ae89dd1edfc607c4ea",
     "upstream": [],
     "checks": [
       {
@@ -15,13 +15,25 @@
       },
       {
         "name": "guide-check",
-        "result": "GUIDE_OK audience=public groups=0 skills=0 paths=0 steps=0 sections=7 terms=72 links=767"
+        "result": "GUIDE_OK audience=public groups=0 skills=0 paths=0 steps=0 sections=11 terms=111 links=919"
+      },
+      {
+        "name": "terms-release",
+        "result": "TERMS_OK terms=73 public=39 team_only=34 proposed=0"
+      },
+      {
+        "name": "vale-public",
+        "result": "0 alerts"
+      },
+      {
+        "name": "private-token-grep",
+        "result": "0 files"
       }
     ],
     "pubkey": "bb1de39b94a44708e3abf583a9689fa3658e247ff7dbd96703f0c216ab8e7154"
   },
   "sig": {
     "alg": "ed25519",
-    "sig_hex": "54104a9a8ffef83334038198d5ce8a6f31db097809785af4ffbd20be1c446b0794df34638e3f595e70bd0501cb209d62306ed25c1debaadf46bdb72e7d96760a"
+    "sig_hex": "a5056a85e5c1a36b58601dc366f1774811b698bc296da10971beafa612eff6fbc547c3fa3a0471375d8cfd143eb3c7662a8b4ec8841f619cdadec514dd08e007"
   }
 }

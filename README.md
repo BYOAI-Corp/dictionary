@@ -1,7 +1,7 @@
 # The BYOAI dictionary of AI coding
 
 The words people use when they build software with AI agents, each with a short and a full
-definition, how people say it, what to avoid, and the terms it connects to. 72 terms in 7
+definition, how people say it, what to avoid, and the terms it connects to. 111 terms in 11
 sections, written in BYOAI's own words.
 
 The notes are plain Markdown with `[[links]]` between terms, so the `dictionary` folder opens as an
@@ -114,6 +114,65 @@ Ways of working with agents, from watching every step to a factory.
 - [AX](dictionary/ax.md): Agent experience: how easy a code base is for an agent to understand, change and check.
 - [Software factory](dictionary/software-factory.md): A set-up where agents take tickets from a backlog and turn them into reviewed changes, with people setting goals and approving.
 - [Dark factory](dictionary/dark-factory.md): A factory with nobody watching: agents plan, build, review and ship on their own.
+
+## Verification (12)
+
+How a claim is checked against its source, and who is allowed to say it is true.
+
+- [Verification discipline](dictionary/verification-discipline.md): The rules every check follows: each claim is checked against a named source, and nothing is marked verified without evidence.
+- [Verifier](dictionary/verifier.md): The service that checks each claim against its source and issues the verdict. Only the verifier can issue a verdict.
+- [Audience-aware routing](dictionary/audience-aware-routing.md): Routing that sets how strict a check is by who will rely on the answer: a court filing gets a stricter path than an internal note.
+- [Complexity routing](dictionary/complexity-routing.md): Sending each check to the cheapest tier that can settle it: plain code first, then a fast model, then a larger model, then a person.
+- [Pre-generation gate](dictionary/pre-generation-gate.md): A check that runs before an agent acts or answers, so a bad step is stopped instead of graded after the fact.
+- [Claim](dictionary/claim.md): One statement to check, such as one sentence of a memo. Short claims check better than whole paragraphs.
+- [Sub-claim](dictionary/sub-claim.md): A smaller statement the verifier splits a claim into. Each one is checked and quoted on its own.
+- [Source](dictionary/source.md): The document a claim is checked against. The verifier uses only that document, never its own knowledge.
+- [Grounding](dictionary/grounding.md): Tying a claim to the exact words in its source that support it. A grounded claim can be checked by anyone holding the source.
+- [Supporting quote](dictionary/supporting-quote.md): The exact words from the source that back a verdict, returned with it so a person can check it in seconds.
+- [Independent agreement](dictionary/independent-agreement.md): Two independent judges from different model families must agree before anything is marked verified. A tie-break alone never verifies.
+- [Grounding Stations](dictionary/grounding-stations.md): BYOAI's name for AI reliability infrastructure: the places an AI answer is checked against evidence before anyone relies on it.
+
+## Verdicts and receipts (12)
+
+What a check returns, and the signed record that proves it happened.
+
+- [Verdict](dictionary/verdict.md): The result the verifier issues for a check: VERIFIED, UNGROUNDED, ABSTAIN or UNCHECKED. Only the verifier issues one.
+- [VERIFIED](dictionary/verified.md): The claim is supported by the exact words of the source. The only green result.
+- [UNGROUNDED](dictionary/ungrounded.md): The source does not support the claim, or contradicts it. Treat the claim as wrong until fixed.
+- [ABSTAIN](dictionary/abstain.md): The check cannot settle the claim: the source is silent, contradicts itself, or the judges disagree. A person decides.
+- [UNCHECKED](dictionary/unchecked.md): The claim was not checked, for example because the verifier was unavailable. Never shown as green.
+- [Claim result](dictionary/claim-result.md): The label on each claim in a report: VERIFIED_TRUE, HALLUCINATED or ABSTAIN. The overall verdict is what counts.
+- [Evidence-only green](dictionary/evidence-only-green.md): BYOAI's rule that a result is green only when evidence was found and quoted, never because nothing objected.
+- [Verification receipt](dictionary/verification-receipt.md): A signed record of each verdict that anyone can check later with an open-source checker, without trusting BYOAI.
+- [Verdict-ID](dictionary/verdict-id.md): A fingerprint of one check (claim, source, version and verdict). The same check always gets the same ID.
+- [Chain of custody](dictionary/chain-of-custody.md): Every record points to the one before it and is signed, so any later edit or deletion shows. One chain covers verdicts, handoffs and payments.
+- [Receipt chain library](dictionary/receipt-chain-library.md): BYOAI's open-source library for writing and checking verification receipts.
+- [Sealed release](dictionary/sealed-release.md): A published release signed by BYOAI, with a file list anyone can check. VERIFIED means every file is exactly what BYOAI sealed.
+
+## Models and the harness (6)
+
+Which models answer, which models judge, and the harness around them.
+
+- [Verification harness](dictionary/verification-harness.md): The layer around any AI model that checks its answers against evidence. The model answers; the harness verifies.
+- [Frontier model](dictionary/frontier-model.md): A large hosted AI model from a provider such as Anthropic. In BYOAI it answers; the harness checks it.
+- [Local generator model](dictionary/local-generator-model.md): A model run on the client's own hardware that drafts answers, trained on BYOAI-checked examples. It drafts; it never verifies itself.
+- [Fast decision model](dictionary/fast-decision-model.md): A small, fast model that answers narrow yes/no or pick-one questions inside a check. The verdict itself is computed in code.
+- [Verified fast check](dictionary/verified-fast-check.md): A fast check where every green still needs the exact quote and every result gets a receipt.
+- [BYOAI router](dictionary/byoai-router.md): BYOAI's router that sends each task to the right model or provider, hosted or on the client's hardware.
+
+## BYOAI products (9)
+
+What BYOAI sells and how it is delivered.
+
+- [Sworn Legal](dictionary/sworn-legal.md): BYOAI's legal verification product: AI-written legal text checked against its sources before anyone relies on it.
+- [BYOAI Legal](dictionary/byoai-legal.md): The name of BYOAI's legal business when speaking to investors. Customers know it as Sworn Legal.
+- [Sworn Legal Enterprise](dictionary/sworn-legal-enterprise.md): Sworn Legal for firms: the verifier, a firm portal and firm-level memory checks, hosted or on the firm's own hardware.
+- [MCP Verifier](dictionary/mcp-verifier.md): The BYOAI verifier as an MCP connector, so any AI assistant can check its own claims against a source.
+- [Verification Clearinghouse](dictionary/verification-clearinghouse.md): Where AI agents pay for checks and receive receipts. BYOAI never holds anyone else's money.
+- [Hallucination Token Credits](dictionary/hallucination-token-credits.md): A proposed standard: when an AI's output is provably wrong, the user gets their tokens back, settled on verification receipts.
+- [Sworn Legal plugin](dictionary/sworn-legal-plugin.md): Sworn Legal's checks packaged as a plugin for Claude, so lawyers verify inside the tools they already use.
+- [Hosted and on-prem](dictionary/hosted-and-on-prem.md): Every BYOAI product can run in BYOAI's cloud or on the client's own hardware.
+- [MDM AI](dictionary/mdm-ai.md): BYOAI's AI-assisted device management for company phones and laptops.
 
 ## Verify a release
 

@@ -1,0 +1,78 @@
+# byoai-corp/dictionary CI. The name rules, word lists and checker live in a private repo, so this job reads them
+# with a read-only deploy key and prints only verdicts and counts: never a name, a token or the key.
+# Every check runs with no network. Pull requests from forks get no secrets, so they cannot run these checks.
+name: dictionary
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    env:
+      VALE_URL: https://github.com/vale-cli/vale/releases/download/v3.13.0/vale_3.13.0_Linux_64-bit.tar.gz
+      VALE_SHA: 4378ee4bc7c2493760826270e55d5569cda35d7c89582e9fdc3070e2a1089193
+    steps:
+      - name: Needs the rules key (not available to pull requests from forks)
+        env:
+          HAS_KEY: ${{ secrets.TERMS_DEPLOY_KEY != '' }}
+        run: '[ "$HAS_KEY" = true ] || { echo "NO_RULES_KEY: a maintainer must run this check"; false; }'
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: repo
+          persist-credentials: false
+      - name: Rules checkout (private, read-only)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: SattvicBeats/byoai-dictionary-team
+          ssh-key: ${{ secrets.TERMS_DEPLOY_KEY }}
+          path: rules
+          persist-credentials: false
+      - name: Fetch Vale 3.13.0 (sha-gated)
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/vale.tgz" "$VALE_URL"
+          echo "$VALE_SHA  $RUNNER_TEMP/vale.tgz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/vale.tgz" -C "$RUNNER_TEMP" vale
+      - name: Build the checker
+        run: cargo build --release --locked -q --manifest-path rules/byoai-terms/Cargo.toml
+      - name: Offline wrapper (no network for every step below)
+        run: |
+          W="$RUNNER_TEMP/offline"
+          if unshare -rn true 2>/dev/null; then
+            printf '#!/bin/sh\nexec unshare -rn "$@"\n' > "$W"; echo "isolation: unshare -rn"
+          else
+            # Ubuntu 24.04 restricts unprivileged user namespaces: new netns as root, then drop back to this user.
+            printf '#!/bin/sh\nexec sudo unshare -n setpriv --reuid=%s --regid=%s --init-groups --reset-env -- env HOME="%s" PATH="%s" "$@"\n' \
+              "$(id -u)" "$(id -g)" "$HOME" "$PATH" > "$W"; echo "isolation: sudo unshare -n + setpriv"
+          fi
+          chmod +x "$W"
+          ifs=$("$W" sh -c "tail -n +3 /proc/net/dev | cut -d: -f1 | tr -d ' '" | tr '\n' ' ')
+          echo "interfaces in namespace: $ifs"
+          [ "$ifs" = "lo " ] || { echo "OFFLINE_REFUSED namespace is not isolated"; false; }
+          echo "OFFLINE=$W" >> "$GITHUB_ENV"
+      - name: check --release (verdict only)
+        run: |
+          o=$($OFFLINE "$PWD/rules/byoai-terms/target/release/byoai-terms" check rules/terms.toml --dict repo/dictionary --release 2>&1 | tail -1) || true
+          case $o in TERMS_OK*) echo "$o";; *) echo "TERMS_REFUSED (details are in the private repo's check)"; false;; esac
+      - name: Vale public rules over every note and the README (count only)
+        run: |
+          L="$RUNNER_TEMP/lint"; mkdir -p "$L" && cp -r rules/out/vale/. "$L/" && cp repo/README.md "$L/"
+          $OFFLINE "$PWD/rules/byoai-terms/target/release/byoai-terms" lintcopy repo/dictionary "$L/dict" >/dev/null
+          n=$(cd "$L" && $OFFLINE "$RUNNER_TEMP/vale" --config .vale.public.ini --output line dict/*.md README.md 2>&1 | grep -c ':') || true
+          echo "Vale public alerts: $n over $(ls "$L"/dict/*.md | wc -l) notes + README"
+          [ "$n" = 0 ]
+      - name: Private host, IP and route grep (count only)
+        run: |
+          pat=$(sed -n 's/^const PRIVATE_TOKENS.*= \[\(.*\)\];/\1/p' rules/byoai-terms/src/main.rs | tr -d '" ' | tr ',' '\n' | sed 's/\./\\./g' | paste -sd'|')
+          [ -n "$pat" ] || { echo "no token list found"; false; }
+          n=$($OFFLINE grep -rliE "$pat" --exclude-dir=.git repo | wc -l)
+          echo "files with a private token: $n"
+          [ "$n" = 0 ]
+      - name: README is generated from the notes
+        run: $OFFLINE python3 -I rules/make_readme_v0_1_3.py repo | cmp - repo/README.md && echo "README matches"
+      - name: No team-only files in this repo
+        run: |
+          n=$(cd repo && find . -path ./.git -prune -o -type f \( -name terms.toml -o -name '*.rs' -o -path '*/styles/BYOAI*' -o -name '.vale*.ini' \) -print | wc -l)
+          echo "team-only files: $n"; [ "$n" = 0 ]

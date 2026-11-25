@@ -32,3 +32,24 @@ blurb = "Carrying knowledge across sessions and loading it only when needed."
 id = "patterns"
 title = "Patterns of work"
 blurb = "Ways of working with agents, from watching every step to a factory."
+
+[[section]]
+id = "byoai-verify"
+title = "Verification"
+blurb = "How a claim is checked against its source, and who is allowed to say it is true."
+
+[[section]]
+id = "byoai-verdicts"
+title = "Verdicts and receipts"
+blurb = "What a check returns, and the signed record that proves it happened."
+
+[[section]]
+id = "byoai-models"
+title = "Models and the harness"
+blurb = "Which models answer, which models judge, and the harness around them."
+
+[[section]]
+id = "byoai-products"
+title = "BYOAI products"
+blurb = "What BYOAI sells and how it is delivered."
+
