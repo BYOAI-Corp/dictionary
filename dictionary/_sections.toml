@@ -1,0 +1,34 @@
+[[section]]
+id = "model"
+title = "The model"
+blurb = "What a model is, how it is run and what it costs."
+
+[[section]]
+id = "sessions"
+title = "Sessions, context windows and turns"
+blurb = "What the model sees on each request, and how a conversation is built."
+
+[[section]]
+id = "tools"
+title = "Tools and environment"
+blurb = "How an agent acts: tools, permissions and the sandbox around it."
+
+[[section]]
+id = "failures"
+title = "Failure modes"
+blurb = "How and why models go wrong, and what to do about it."
+
+[[section]]
+id = "handoffs"
+title = "Handoffs"
+blurb = "Moving work between sessions, agents and people without losing the truth."
+
+[[section]]
+id = "memory"
+title = "Memory and steering"
+blurb = "Carrying knowledge across sessions and loading it only when needed."
+
+[[section]]
+id = "patterns"
+title = "Patterns of work"
+blurb = "Ways of working with agents, from watching every step to a factory."

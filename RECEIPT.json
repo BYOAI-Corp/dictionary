@@ -1,0 +1,27 @@
+{
+  "seal": {
+    "format": "byoai.release/0.1",
+    "repo": "byoai-corp/dictionary",
+    "release": "v0.1.0",
+    "issued_at": "2026-11-25T00:18:20Z",
+    "files": 77,
+    "manifest": "MANIFEST.sha256",
+    "manifest_sha256": "3fce630db79da5f6d4383b18a0fc6d498ba4efd6b0ba67080d88f2b39a140790",
+    "upstream": [],
+    "checks": [
+      {
+        "name": "no-outside-author-names",
+        "result": "ok"
+      },
+      {
+        "name": "guide-check",
+        "result": "GUIDE_OK audience=public groups=0 skills=0 paths=0 steps=0 sections=7 terms=72 links=767"
+      }
+    ],
+    "pubkey": "bb1de39b94a44708e3abf583a9689fa3658e247ff7dbd96703f0c216ab8e7154"
+  },
+  "sig": {
+    "alg": "ed25519",
+    "sig_hex": "54104a9a8ffef83334038198d5ce8a6f31db097809785af4ffbd20be1c446b0794df34638e3f595e70bd0501cb209d62306ed25c1debaadf46bdb72e7d96760a"
+  }
+}
